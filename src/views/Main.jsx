@@ -7,7 +7,7 @@ import Markdown from './Markdown';
 
 function Main(props) {
     const { posts, title } = props;
-//삭제
+//test주석 삭제필요
     return (
         <Grid
             item
