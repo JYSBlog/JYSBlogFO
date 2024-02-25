@@ -19,4 +19,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_PROJECT_KEY: "JYSBlog_JYSBlogFO"
-          SONAR_ORGANIZATION: "jysblog/projects"
+          SONAR_ORGANIZATION: "jysblog"
