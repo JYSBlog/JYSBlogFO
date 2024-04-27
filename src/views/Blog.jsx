@@ -4,15 +4,15 @@ import CssBaseline from '@mui/material/CssBaseline';
 import Grid from '@mui/material/Grid';
 import Container from '@mui/material/Container';
 import GitHubIcon from '@mui/icons-material/GitHub';
-import FacebookIcon from '@mui/icons-material/Facebook';
-import XIcon from '@mui/icons-material/X';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Header from './Header';
 import MainFeaturedPost from './MainFeaturedPost';
 import FeaturedPost from './FeaturedPost';
-import Main from './Main.jsx';
 import Sidebar from './Sidebar';
 import Footer from './Footer';
+import Pagination from '@mui/material/Pagination';
+import Box from "@mui/material/Box";
+import { useState } from 'react';
 
 const sections = [
     { title: 'Technology', url: '#' },
@@ -28,12 +28,7 @@ const sections = [
 ];
 
 const mainFeaturedPost = {
-    title: 'Title of a longer featured blog post',
-    description:
-        "Multiple lines of text that form the lede, informing new readers quickly and efficiently about what's most interesting in this post's contents.",
     image: 'https://source.unsplash.com/random?wallpapers',
-    imageText: 'main image description',
-    linkText: 'Continue reading…',
 };
 
 const featuredPosts = [
@@ -61,23 +56,8 @@ const sidebar = {
     title: 'About',
     description:
         'Etiam porta sem malesuada magna mollis euismod. Cras mattis consectetur purus sit amet fermentum. Aenean lacinia bibendum nulla sed consectetur.',
-    archives: [
-        { title: 'March 2020', url: '#' },
-        { title: 'February 2020', url: '#' },
-        { title: 'January 2020', url: '#' },
-        { title: 'November 1999', url: '#' },
-        { title: 'October 1999', url: '#' },
-        { title: 'September 1999', url: '#' },
-        { title: 'August 1999', url: '#' },
-        { title: 'July 1999', url: '#' },
-        { title: 'June 1999', url: '#' },
-        { title: 'May 1999', url: '#' },
-        { title: 'April 1999', url: '#' },
-    ],
     social: [
         { name: 'GitHub', icon: GitHubIcon },
-        { name: 'X', icon: XIcon },
-        { name: 'Facebook', icon: FacebookIcon },
     ],
 };
 
@@ -85,31 +65,60 @@ const sidebar = {
 const defaultTheme = createTheme();
 
 export default function Blog() {
+    // 한 페이지에 보여줄 포스트의 수
+    const postsPerPage = 5;
+// 현재 페이지 상태
+// eslint-disable-next-line react-hooks/rules-of-hooks
+    const [page, setPage] = useState(1);
+// 전체 페이지 수 계산
+    const pageCount = Math.ceil(featuredPosts.length / postsPerPage);
+
+// 현재 페이지에 따라 보여줄 포스트들을 필터링
+    const currentPosts = featuredPosts.slice(
+        (page - 1) * postsPerPage,
+        page * postsPerPage
+    );
+
+// 페이지 변경 핸들러
+    const handleChange = (event, value) => {
+        setPage(value);
+    };
+
     return (
         <ThemeProvider theme={defaultTheme}>
             <CssBaseline />
             <Container maxWidth="lg">
-                <Header title="Blog" sections={sections} />
+                <Header title="JYSBlog" sections={sections} />
                 <main>
-                    <MainFeaturedPost post={mainFeaturedPost} />
-                    <Grid container spacing={4}>
+                    <Box sx={{flexGrow: 1}}>
+                        <Grid container spacing={5} sx={{mt: 3}}>
+                            {/* Sidebar 컴포넌트를 Grid 아이템으로 배치합니다. 예를 들어, 전체 너비의 1/3을 차지하게 합니다. */}
+                            <Grid item xs={12} md={9}>
+                                <Sidebar
+                                    title={sidebar.title}
+                                    description={sidebar.description}
+                                    social={sidebar.social}
+                                />
+                            </Grid>
+                            {/* MainFeaturedPost 컴포넌트를 Grid 아이템으로 배치합니다. 예를 들어, 나머지 너비를 차지하게 합니다. */}
+                            <Grid item xs={12} md={3}>
+                                <MainFeaturedPost post={mainFeaturedPost}/>
+                            </Grid>
+                        </Grid>
+                    </Box>
+                    <Grid container spacing={2}>
                         {featuredPosts.map((post) => (
-                            <FeaturedPost key={post.title} post={post} />
+                            <FeaturedPost key={post.title} post={post}/>
                         ))}
                     </Grid>
-                    <Grid container spacing={5} sx={{ mt: 3 }}>
-                        <Main title="From the firehose" posts={posts} />
-                        <Sidebar
-                            title={sidebar.title}
-                            description={sidebar.description}
-                            archives={sidebar.archives}
-                            social={sidebar.social}
-                        />
-                    </Grid>
+                    <br/>
+                    <div style={{display: 'flex', justifyContent: 'center'}}>
+                        <Pagination count={pageCount} page={page} onChange={handleChange}/>
+                    </div>
                 </main>
             </Container>
             <Footer
-                title="Footer"
+                title=""
                 description="Something here to give the footer a purpose!"
             />
         </ThemeProvider>
